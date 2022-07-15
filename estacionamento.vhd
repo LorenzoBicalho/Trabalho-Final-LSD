@@ -49,6 +49,7 @@ component DataPath is
 		-- SAIDAS --
 		
 		mensagem : out std_logic_vector(15 downto 0);
+		dadosImpressao : out std_logic_vector(15 downto 0);
 		
 		addrTicket : out std_logic;
 		ticketOk : out std_logic
@@ -84,58 +85,45 @@ end component Controladora;
 
 -- Signals entre Controladora e Datapath -- 
 
-signal aux_total_itens_lt_32 : std_logic;
-signal aux_saldo_lt_total : std_logic;
-signal aux_ld_total : std_logic;
-signal aux_clr_total : std_logic;
-signal aux_ld_total_itens : std_logic;
-signal aux_clr_total_itens : std_logic;
-signal aux_add_sel : std_logic;
-signal aux_del_sel : std_logic;
+signal auxTicketOk : std_logic;
+signal auxSelecionaMensagem : std_logic;
+signal auxEntradaAberto : std_logic;
+signal auxSalvaDados : std_logic;
+signal auxTicketRegClr : std_logic;
 
 begin
 										  
 	A_Controladora : Controladora
 		port map (
-			inicia_compra => inicia_compra,
-			finaliza_compra => finaliza_compra,
-			cancelar => cancelar,
-			pagar_compra => pagar_compra,
-			cartao_lido => cartao_lido,
-			add => add,
-			del => del,
+			placaCapturada => placaCapturada,
+			botaoEntrada => botaoEntrada,
+			sensorEntrada => sensorEntrada,
+			sensorSaida => sensorSaida,
+			ticketOk => auxTicketOk,
 			clock => clock,
-			clear => clear_controladora,
-			total_itens_lt_32 => aux_total_itens_lt_32,
-			saldo_lt_total => aux_saldo_lt_total,
-			ld_total => aux_ld_total,
-			clr_total => aux_clr_total,
-			ld_total_itens => aux_ld_total_itens,
-			clr_total_itens => aux_clr_total_itens,
-			erro => erro,
-			concluido => concluido,
-			desconta => desconta,
-			ler_pagamento => ler_pagamento,
-			add_sel => aux_add_sel,
-			del_sel => aux_del_sel
+			clear => clear,
+			selecionaMensagem => auxSelecionaMensagem,
+			imprimeTicket => imprimeTicket,
+			entradaAberto => auxEntradaAberto,
+			saidaAberto => saidaAberto,
+			salvaDados => auxSalvaDados,
+			ticketRegClr => auxTicketRegClr
 		);
 		
 	B_DataPath : DataPath  
-		port map (
-			valor_produto => valor_produto,
-			saldo_cartao => saldo_cartao,
+			port map (
+			dadosLeitorQr => dadosLeitorQr,
+			dadosPlaca => dadosPlaca,
+			addrLeitorQr => addrLeitorQr,
+			selecionaMensagem => auxSelecionaMensagem,
+			entradaAberto => auxEntradaAberto,
+			salvaDados => auxSalvaDados,
+			ticketRegClr => auxTicketRegClr,
 			clock => clock,
-			ld_total => aux_ld_total,
-			clr_total => aux_clr_total,
-			ld_total_itens => aux_ld_total_itens,
-			clr_total_itens => aux_clr_total_itens,
-			saldo_restante => saldo_restante,
-			valor_compra => valor_compra,
-			quantidade_itens => quantidade_itens,
-			total_itens_lt_32 => aux_total_itens_lt_32,
-			saldo_lt_total => aux_saldo_lt_total,
-			add_sel => aux_add_sel,
-			del_sel => aux_del_sel
+			mensagem => mensagem,
+			dadosImpressao => dadosImpressao,
+			addrTicket => addrTicket,
+			ticketOk => auxTicketOk
 		);
 
 end RTLestacionamento ;

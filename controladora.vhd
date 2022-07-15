@@ -20,7 +20,6 @@ entity Controladora is
 		
 		selecionaMensagem : out std_logic;
 		imprimeTicket : out std_logic;
-		dadosImpressao : out std_logic;
 		entradaAberto : out std_logic;
 		saidaAberto : out std_logic;
 		salvaDados : out std_logic;
@@ -83,7 +82,6 @@ begin
 	mensagem <= '0';
 	selecionaMensagem <= '0';
 	imprimeTicket <= '0';
-	dadosImpressao <= '0';
 	
 	entradaAberto <= '0';
 	saidaAberto <= '0';
@@ -96,7 +94,6 @@ begin
                 mensagem <= '0';
                 selecionaMensagem <= '0';
                 imprimeTicket <= '0';
-                dadosImpressao <= '0';
                 entradaAberto <= '0';
                 saidaAberto <= '0';
                 salvaDados <= '0';

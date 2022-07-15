@@ -18,6 +18,7 @@ entity DataPath is
 		
 		-- SAIDAS --
 		mensagem : out std_logic_vector(15 downto 0);
+		dadosImpressao : out std_logic_vector(15 downto 0);
 		
 		addrTicket : out std_logic;
 		ticketOk : out std_logic
