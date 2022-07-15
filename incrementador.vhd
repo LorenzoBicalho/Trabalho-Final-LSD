@@ -1,19 +1,23 @@
 library ieee;
 use ieee.std_logic_1164.all;
-use ieee.std_logic_unsigned.all;
+use ieee.numeric_std.all;
 
 entity incrementador is
 	generic (
-        W       :       integer := 7
+    	DATA_WIDTH : natural := 16
     );
-	port (	
-		x 	: in std_logic_vector(W-1 downto 0);
-		s 		: out std_logic_vector(W-1 downto 0)
-	);
-end incrementador;
 
-architecture incrementador of incrementador is
-constant v : std_logic_vector(W-1 downto 0) := "0000001";
+	port (
+      a 		: in std_logic_vector((DATA_WIDTH - 1) downto 0);
+      result	: out std_logic_vector((DATA_WIDTH - 1) downto 0)
+    );
+
+end entity;
+
+architecture behavior of incrementador is
 begin
-		s <= x + v;
-end incrementador;
+  process(a)
+  begin
+    result <= std_logic_vector(unsigned(a) + 1);
+  end process;
+end behavior;
