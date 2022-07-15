@@ -66,10 +66,7 @@ begin
 	end process;
 	
 	process (
-		dadosLeitorQr,
-		addrLeitorQr,
 		placaCapturada,
-		dadosPlaca,
 		botaoEntrada,
 		sensorEntrada,
 		sensorSaida,
@@ -79,25 +76,20 @@ begin
 
 	begin
 	
-	mensagem <= '0';
 	selecionaMensagem <= '0';
 	imprimeTicket <= '0';
-	
 	entradaAberto <= '0';
 	saidaAberto <= '0';
 	salvaDados <= '0';
-	addrTicket <= '0';
     ticketRegClr <= '0';
 					
 	case estadoatual is 
 		when inicio =>
-                mensagem <= '0';
                 selecionaMensagem <= '0';
                 imprimeTicket <= '0';
                 entradaAberto <= '0';
                 saidaAberto <= '0';
                 salvaDados <= '0';
-                addrTicket <= '0';
                 ticketRegClr <= '1';
                 
 				proximoEstado <= espera;
@@ -130,7 +122,7 @@ begin
 		when portaoEntradaAberto =>
 			imprimeTicket <= '0';
             entradaAberto <= '1';
-            if (sensorEntrada = '1') then
+            if (sensorEntrada = '0') then
 				proximoestado <= portaoEntradaFechado;
 			else
 				proximoestado <= portaoEntradaAberto;
