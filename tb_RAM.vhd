@@ -1,67 +1,59 @@
-// Testbench
-module test;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_unsigned.all;
 
-  reg        clk_write;
-  reg  [4:0] address_write;
-  reg  [7:0] data_write;
-  reg        write_enable;
-  reg        clk_read;
-  reg  [4:0] address_read;
-  wire [7:0] data_read;
-  
-  // Instantiate design under test
-  // D_WIDTH = 8
-  // A_WIDTH = 5
-  // A_MAX = 2^A_WIDTH = 32
-  ram #(8, 5, 32) RAM (
-    .clk_write(clk_write),
-    .address_write(address_write),
-    .data_write(data_write),
-    .write_enable(write_enable),
-    .clk_read(clk_read),
-    .address_read(address_read),
-    .data_read(data_read));
-    
-  initial begin
-    // Dump waves
-    $dumpfile("dump.vcd");
-    $dumpvars(1, test);
-    
-    clk_write = 0;
-    clk_read = 0;
-    write_enable = 0;
-    address_read = 5'h1B;
-    address_write = address_read;
+entity tb_ram is 
+end entity;
 
-    $display("Read initial data.");
-    toggle_clk_read;
-    $display("data[%0h]: %0h",
-      address_read, data_read);
-    
-    $display("Write new data.");
-    write_enable = 1;
-    data_write = 8'hC5;
-    toggle_clk_write;
-    write_enable = 0;
-    
-    $display("Read new data.");
-    toggle_clk_read;
-    $display("data[%0h]: %0h",
-      address_read, data_read);
-  end
-  
-  task toggle_clk_write;
-    begin
-      #10 clk_write = ~clk_write;
-      #10 clk_write = ~clk_write;
-    end
-  endtask
+architecture behavior of tb_ram is
 
-  task toggle_clk_read;
-    begin
-      #10 clk_read = ~clk_read;
-      #10 clk_read = ~clk_read;
-    end
-  endtask
+signal DATA_IN : std_logic_vector(7 downto 0) := "00000000";
+signal ADDRESS : std_logic_vector(7 downto 0) := "00000000";
+signal W_R : std_logic := '0';
+signal DATA_OUT : std_logic_vector(7 downto 0);
 
-endmodule
+component ram is
+    port(DATA_IN : in std_logic_vector(7 downto 0);
+         ADDRESS : in std_logic_vector(7 downto 0);
+         W_R : in std_logic;
+         DATA_OUT : out std_logic_vector(7 downto 0)
+         );
+end component;
+
+begin
+  UUT : ram port map(DATA_IN, ADDRESS, W_R, DATA_OUT);
+
+  process
+  begin
+    -- Write data into ram
+    wait for 100 ns;
+    ADDRESS <= "10000000";
+    DATA_IN <= "01111111";
+    wait for 100 ns;
+    ADDRESS <= "01000000";
+    DATA_IN <= "10111111";
+    wait for 100 ns;
+    ADDRESS <= "00100000";
+    DATA_IN <= "11011111";
+    wait for 100 ns;
+    ADDRESS <= "00010000";
+    DATA_IN <= "11101111";
+    wait for 110 ns;
+
+    -- Read data from ram
+    W_R  <= '1';
+    ADDRESS <= "00000000";
+    wait for 100 ns;
+    ADDRESS <= "10000000";
+    wait for 100 ns;
+    ADDRESS <= "01000000";
+    wait for 100 ns;
+    ADDRESS <= "00100000";
+    wait for 100 ns;
+    ADDRESS <= "00010000";
+    wait for 100 ns;
+
+    wait;
+  end process;
+
+end behavior;
