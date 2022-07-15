@@ -1,0 +1,131 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.all;
+use ieee.numeric_std.all;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+
+entity tb_estacionamento is
+end tb_estacionamento;
+
+architecture teste of tb_estacionamento is
+
+component estacionamento is
+	port (
+		-- Entradas
+		
+		botaoEntrada : in std_logic;
+		sensorEntrada : in std_logic;
+		sensorSaida : in std_logic;
+        placaCapturada : in std_logic;
+        
+        addrLeitorQr : in std_logic_vector(9 downto 0);
+        dadosLeitorQr : in std_logic_vector(15 downto 0);
+		dadosPlaca : in std_logic_vector(15 downto 0);
+		
+		
+		clock : in std_logic;
+		clear : in std_logic;
+		
+		
+		-- Saidas 
+
+		imprimeTicket : out std_logic;
+		entradaAberto : out std_logic;
+		saidaAberto : out std_logic;
+        
+        mensagem : out std_logic_vector(15 downto 0);
+        dadosImpressao : out std_logic_vector(15 downto 0);
+    );
+end component estacionamento;
+
+
+signal botaoEntrada, sensorEntrada, sensorSaida, placaCapturada : std_logic;
+signal clock, clear : std_logic;
+signal addrLeitorQr : std_logic_vector(9 downto 0);
+signal dadosLeitorQr, dadosPlaca : std_logic_vector(15 downto 0);
+
+signal mensagem : std_logic_vector(15 downto 0);
+signal dadosImpressao : std_logic_vector(15 downto 0);
+signal imprimeTicket, entradaAberto, saidaAberto : std_logic;
+
+begin
+	instancia_estacionamento: estacionamento 
+	port map(
+		botaoEntrada=>botaoEntrada,
+		sensorEntrada=>sensorEntrada,
+		sensorSaida=>sensorSaida,
+        placaCapturada => placaCapturada,
+        addrLeitorQr=>addrLeitorQr,
+		dadosLeitorQr=>dadosLeitorQr,
+		dadosPlaca=>dadosPlaca,
+		clock=>clock,
+		clear=>clear,
+		mensagem=>mensagem,
+		dadosImpressao=>dadosImpressao,
+		imprimeTicket=>imprimeTicket,
+		entradaAberto=>entradaAberto,
+		saidaAberto=>saidaAberto,
+	);
+	
+	-- Estimulo do clock --
+	process
+	begin
+		clock <= '0';
+		wait for 10 ns;
+		clock <= '1';
+		wait for 10 ns;
+	end process;
+	
+	-- Estimulo entradas
+	process
+	begin
+		clear <= '0';
+        
+		addrLeitorQr <= std_logic_vector(to_unsigned(0, 10));
+		dadosLeitorQr <= std_logic_vector(to_unsigned(0, 16));
+		dadosPlaca <= std_logic_vector(to_unsigned(0, 16));
+
+		botaoEntrada <= '0';
+		sensorEntrada <= '0';
+        placaCapturada <= '0';
+		sensorSaida <= '0';
+	
+		wait for 40 ns;
+		
+        addrLeitorQr <= std_logic_vector(to_unsigned(0, 10));
+		dadosLeitorQr <= std_logic_vector(to_unsigned(0, 16));
+		dadosPlaca <= std_logic_vector(to_unsigned(10, 16));
+
+		botaoEntrada <= '1';
+		sensorEntrada <= '1';
+        placaCapturada <= '1';
+		sensorSaida <= '0';
+        
+		wait for 50 ns;
+		
+        addrLeitorQr <= std_logic_vector(to_unsigned(0, 10));
+		dadosLeitorQr <= std_logic_vector(to_unsigned(0, 16));
+		dadosPlaca <= std_logic_vector(to_unsigned(20, 16));
+
+		botaoEntrada <= '1';
+		sensorEntrada <= '1';
+        placaCapturada <= '1';
+		sensorSaida <= '0';
+        
+		wait for 50 ns;
+		
+        addrLeitorQr <= std_logic_vector(to_unsigned(1, 10));
+		dadosLeitorQr <= std_logic_vector(to_unsigned(20, 16));
+		dadosPlaca <= std_logic_vector(to_unsigned(0, 16));
+
+		botaoEntrada <= '0';
+		sensorEntrada <= '0';
+        placaCapturada <= '0';
+		sensorSaida <= '1';
+        
+		wait for 50 ns;
+		
+		wait;
+		
+	end process;
+
+end teste;

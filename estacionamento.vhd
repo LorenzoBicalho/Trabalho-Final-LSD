@@ -5,11 +5,14 @@ entity estacionamento is
 	port (
 		-- Entradas
 		
-		placaCapturada : in std_logic;
 		botaoEntrada : in std_logic;
 		sensorEntrada : in std_logic;
 		sensorSaida : in std_logic;
-        ticketOk : in std_logic;
+        placaCapturada : in std_logic;
+        
+        addrLeitorQr : in std_logic_vector(9 downto 0);
+        dadosLeitorQr : in std_logic_vector(15 downto 0);
+		dadosPlaca : in std_logic_vector(15 downto 0);
 		
 		
 		clock : in std_logic;
@@ -18,13 +21,12 @@ entity estacionamento is
 		
 		-- Saidas 
 
-		selecionaMensagem : out std_logic;
 		imprimeTicket : out std_logic;
-		dadosImpressao : out std_logic;
 		entradaAberto : out std_logic;
 		saidaAberto : out std_logic;
-		salvaDados : out std_logic;
-        ticketRegClr : out std_logic
+        
+        mensagem : out std_logic_vector(15 downto 0);
+        dadosImpressao : out std_logic_vector(15 downto 0);
 
     );
 end estacionamento;
