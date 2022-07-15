@@ -1,19 +1,26 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
-USE ieee.std_logic_arith.ALL;
-USE ieee.std_logic_unsigned.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
 
-ENTITY comparador16bits IS
-	PORT (
-		FirstNumber : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
-		SecondNumber : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
-		First_lt_Second : OUT STD_LOGIC
-	);
-END comparador16bits;
+entity comparador is
+	generic (
+		DATA_WIDTH : natural := 16
+    );
 
-ARCHITECTURE compara OF comparador16bits IS
-BEGIN
-	WITH FirstNumber < SecondNumber SELECT
-	First_lt_Second <= '1' WHEN true,
-		'0' WHEN OTHERS;
-END compara;
+	port (
+      a : in std_logic_vector((DATA_WIDTH - 1) downto 0);
+      a_eq_0 : out std_logic
+    );
+	
+end comparador;
+
+architecture behavior of comparador is
+begin
+  process(a)
+  begin
+    if(a = x"0000") then
+      a_eq_0 <= '1';
+    else
+      a_eq_0 <= '0';
+  	end if;
+	end process;
+end behavior;

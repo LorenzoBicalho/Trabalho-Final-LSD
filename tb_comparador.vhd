@@ -1,26 +1,25 @@
 library ieee;
 use ieee.std_logic_1164.all;
-use ieee.numeric_std.all;
 
-entity tb_incrementador is
+entity tb_comparador is
 	generic (
     	DATA_WIDTH : natural := 16
     );
-end entity;
+end tb_comparador;
 
-architecture teste of tb_incrementador is
-	component incrementador is
+architecture teste of tb_comparador is
+	component comparador is
 		port(
-          a 		: in std_logic_vector((DATA_WIDTH - 1) downto 0);
-          result 	: out std_logic_vector((DATA_WIDTH - 1) downto 0)
+          a : in std_logic_vector((DATA_WIDTH - 1) downto 0);
+          a_eq_0 : out std_logic
         );
-	
+
 	end component;
 
 	signal A : std_logic_vector((DATA_WIDTH - 1) downto 0);
-	signal RESULT : std_logic_vector((DATA_WIDTH - 1) downto 0);
+	signal A_EQ_0 : std_logic;
 
-begin
-	instancia_incrementador : incrementador port map(a=>A, result=>RESULT);
-	A <= x"0001", x"0002" after 20 ns, x"0003" after 40 ns, x"0004" after 60 ns, x"0005" after 80 ns, x"0006" after 100 ns, x"0007" after 120 ns;
+	begin
+      instancia_comparador : comparador port map(a=>A, a_eq_0=>A_EQ_0);
+      A <= x"0000", x"0002" after 5 ns, x"0000" after 10 ns, x"0003" after 15 ns, x"0000" after 20 ns;
 end teste;

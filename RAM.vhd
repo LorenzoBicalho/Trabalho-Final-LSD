@@ -1,41 +1,35 @@
--- Random Access Memory (RAM) with
--- 1 read/write port
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_unsigned.all;
 
-LIBRARY IEEE;
-    USE IEEE.STD_LOGIC_1164.ALL;
-    USE IEEE.STD_LOGIC_UNSIGNED.ALL;
-
--- RAM entity
-ENTITY RAM IS
-  PORT(
-       DATAIN : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
-       ADDRESS : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
-       -- Write when 0, Read when 1
-       W_R : IN STD_LOGIC;
-       DATAOUT : OUT STD_LOGIC_VECTOR(7 DOWNTO 0)
+entity ram is
+  port(
+       data_in : in std_logic_vector(7 downto 0);
+       addressess : in std_logic_vector(7 downto 0);
+       w_r : in std_logic;
+       data_out : out std_logic_vector(7 downto 0)
        );
-END ENTITY;
+end entity;
 
--- RAM architecture
-ARCHITECTURE BEV OF RAM IS
+architecture behavior of ram is
 
-TYPE MEM IS ARRAY (255 DOWNTO 0) OF STD_LOGIC_VECTOR(7 DOWNTO 0);
-SIGNAL MEMORY : MEM;
-SIGNAL ADDR : INTEGER RANGE 0 TO 255;
+type mem is array (255 downto 0) of std_logic_vector(7 downto 0);
+signal MEMORY : mem;
+signal ADDRESS : integer range 0 to 255;
 
-BEGIN
+begin
 
-  PROCESS(ADDRESS, DATAIN, W_R)
-  BEGIN
+  process(addressess, data_in, w_r)
+  begin
 
-    ADDR<=CONV_INTEGER(ADDRESS);
-    IF(W_R='0')THEN
-      MEMORY(ADDR)<=DATAIN;
-    ELSIF(W_R='1')THEN
-      DATAOUT<=MEMORY(ADDR);
-    ELSE
-      DATAOUT<="ZZZZZZZZ";
-    END IF;
-  END PROCESS;
+    ADDRESS <= conv_integer(addressess);
+    if(w_r='0') then
+      MEMORY(address) <= data_in;
+    elsif(w_r='1') then
+      data_out <= MEMORY(ADDRESS);
+    else
+      data_out <= "ZZZZZZZZ";
+    end if;
+  end process;
 
-END BEV;
+end behavior;
