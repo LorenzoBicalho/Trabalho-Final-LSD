@@ -6,10 +6,7 @@ entity Controladora is
     port ( 
 		--Entradas--
 
-		dadosLeitorQr : in std_logic;
-		addrLeitorQr : in std_logic;
 		placaCapturada : in std_logic;
-		dadosPlaca : in std_logic;
 		botaoEntrada : in std_logic;
 		sensorEntrada : in std_logic;
 		sensorSaida : in std_logic;
@@ -21,7 +18,6 @@ entity Controladora is
 		
 		--Saídas--
 		
-		mensagem : out std_logic;
 		selecionaMensagem : out std_logic;
 		imprimeTicket : out std_logic;
 		dadosImpressao : out std_logic;
@@ -29,7 +25,6 @@ entity Controladora is
 		entradaAberto : out std_logic;
 		saidaAberto : out std_logic;
 		salvaDados : out std_logic;
-		addrTicket : out std_logic;
         ticketRegClr : out std_logic
     );
 
@@ -46,7 +41,7 @@ type estado is (
 	portaoEntradaFechado,
 	leTicket,
 	portaoSaidaAberto,
-	portaoSaidaFechado,
+	portaoSaidaFechado
 );
 
 signal estadoAtual : estado := inicio;
@@ -57,9 +52,6 @@ signal proximoEstado : estado := inicio;
 -- identificar se o botao foi pressionado e solto
 -------------------------------------------------
 signal auxBotaoEntrada : std_logic := '0';
-signal aux_finaliza_compra : std_logic := '0';
-signal aux_cancelar : std_logic := '0';
-signal aux_pagar_compra : std_logic := '0';
 
 begin
 
@@ -68,9 +60,9 @@ begin
 	process(clear, clock) is	
 	begin
 		if(clear = '1') then
-			estado_atual <= iniciar;
+			estadoatual <= inicio;
 		elsif(rising_edge(clock)) then
-			estado_atual <= proximo_estado;
+			estadoatual <= proximoestado;
 			auxBotaoEntrada <= botaoEntrada;
 		end if;
 	end process;
@@ -100,7 +92,7 @@ begin
 	addrTicket <= '0';
     ticketRegClr <= '0';
 					
-	case estado_atual is 
+	case estadoatual is 
 		when inicio =>
                 mensagem <= '0';
                 selecionaMensagem <= '0';
@@ -121,59 +113,59 @@ begin
 			salvaDados <= '0';
 			if (sensorSaida = '1') then
 				proximoEstado <= leTicket;
-			elsif (sensorEnrada = '1') and (sensorSaida = 0) then
-				proximoEstado <= capturaPlaca;
+			elsif (sensorEntrada = '1') and (sensorSaida = '0') then
+				proximoEstado <= capturadaPlaca;
 			else
 				proximoEstado <= espera;
 			end if;
 		
-		when capturaPlaca =>
+		when capturadaPlaca =>
         	salvaDados <= '1';
 			if (placaCapturada = '1') then
-				proximo_estado <= impressaoTicket;
+				proximoestado <= impressaoTicket;
 			else
-				proximo_estado <= capturaPlaca;
+				proximoestado <= capturadaPlaca;
 			end if;
 		
 		when impressaoTicket =>
 			imprimeTicket <= '1';
-			proximo_estado <= portaoEntradaAberto;
+			proximoestado <= portaoEntradaAberto;
 
 		when portaoEntradaAberto =>
 			imprimeTicket <= '0';
             entradaAberto <= '1';
-            if (sensorEnrada = '1') then
-				proximo_estado <= portaoEntradaFechado;
+            if (sensorEntrada = '1') then
+				proximoestado <= portaoEntradaFechado;
 			else
-				proximo_estado <= portaoEntradaAberto;
+				proximoestado <= portaoEntradaAberto;
 			end if;
             
 		when portaoEntradaFechado =>
 			entradaAberto <= '0';
-			proximo_estado <= espera;
+			proximoestado <= espera;
 		
 		when leTicket =>
-        	selecionaMensagem <= '0'
+        	selecionaMensagem <= '0';
 			if (sensorSaida = '0') then
-				proximo_estado <= espera;
+				proximoestado <= espera;
 			elsif (ticketOk = '0') then
-				proximo_estado <= leTicket;
+				proximoestado <= leTicket;
 			else
-				proximo_estado <= portaSaidaAberto;
+				proximoestado <= portaoSaidaAberto;
 			end if;
 		
-		when portaSaidaAberto =>
+		when portaoSaidaAberto =>
 			selecionaMensagem <= '1';
             saidaAberto <= '1';
 			if (sensorSaida = '0') then
-				proximo_estado <= portaSaidaFechado;
+				proximoestado <= portaoSaidaFechado;
 			else
-				proximo_estado <= portaSaidaAberto;
+				proximoestado <= portaoSaidaAberto;
 			end if;
 
-		when portaSaidaFechado =>
+		when portaoSaidaFechado =>
 			saidaAberto <= '0';
-			proximo_estado <= espera;
+			proximoestado <= espera;
 		
 			
 		end case;
