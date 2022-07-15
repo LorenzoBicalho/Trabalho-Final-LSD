@@ -21,7 +21,6 @@ entity Controladora is
 		selecionaMensagem : out std_logic;
 		imprimeTicket : out std_logic;
 		dadosImpressao : out std_logic;
-		
 		entradaAberto : out std_logic;
 		saidaAberto : out std_logic;
 		salvaDados : out std_logic;
