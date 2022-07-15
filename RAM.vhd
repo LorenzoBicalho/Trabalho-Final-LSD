@@ -1,41 +1,41 @@
-/* 
- * Random Access Memory (RAM) with
- * 1 read port and 1 write port
- */
-module ram (clk_write, address_write,
-  data_write, write_enable,
-  clk_read, address_read, data_read);
-  
-  parameter D_WIDTH = 16;
-  parameter A_WIDTH = 4;
-  parameter A_MAX = 16; // 2^A_WIDTH
+-- Random Access Memory (RAM) with
+-- 1 read/write port
 
-  // Write port
-  input                clk_write;
-  input  [A_WIDTH-1:0] address_write;
-  input  [D_WIDTH-1:0] data_write;
-  input                write_enable;
+LIBRARY IEEE;
+    USE IEEE.STD_LOGIC_1164.ALL;
+    USE IEEE.STD_LOGIC_UNSIGNED.ALL;
 
-  // Read port
-  input                clk_read;
-  input  [A_WIDTH-1:0] address_read;
-  output [D_WIDTH-1:0] data_read;
-  
-  reg    [D_WIDTH-1:0] data_read;
-  
-  // Memory as multi-dimensional array
-  reg [D_WIDTH-1:0] memory [A_MAX-1:0];
+-- RAM entity
+ENTITY RAM IS
+  PORT(
+       DATAIN : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
+       ADDRESS : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
+       -- Write when 0, Read when 1
+       W_R : IN STD_LOGIC;
+       DATAOUT : OUT STD_LOGIC_VECTOR(7 DOWNTO 0)
+       );
+END ENTITY;
 
-  // Write data to memory
-  always @(posedge clk_write) begin
-    if (write_enable) begin
-      memory[address_write] <= data_write;
-    end
-  end
+-- RAM architecture
+ARCHITECTURE BEV OF RAM IS
 
-  // Read data from memory
-  always @(posedge clk_read) begin
-    data_read <= memory[address_read];
-  end
+TYPE MEM IS ARRAY (255 DOWNTO 0) OF STD_LOGIC_VECTOR(7 DOWNTO 0);
+SIGNAL MEMORY : MEM;
+SIGNAL ADDR : INTEGER RANGE 0 TO 255;
 
-endmodule
+BEGIN
+
+  PROCESS(ADDRESS, DATAIN, W_R)
+  BEGIN
+
+    ADDR<=CONV_INTEGER(ADDRESS);
+    IF(W_R='0')THEN
+      MEMORY(ADDR)<=DATAIN;
+    ELSIF(W_R='1')THEN
+      DATAOUT<=MEMORY(ADDR);
+    ELSE
+      DATAOUT<="ZZZZZZZZ";
+    END IF;
+  END PROCESS;
+
+END BEV;
