@@ -6,10 +6,10 @@ entity mux is
     	DATA_WIDTH : natural := 16
     );
 	port(
-      	a 		: in std_logic_vector((DATA_WIDTH -1) downto 0);
-      	b 		: in std_logic_vector((DATA_WIDTH -1) downto 0);
+      	a 		: in std_logic_vector((DATA_WIDTH - 1) downto 0);
+      	b 		: in std_logic_vector((DATA_WIDTH - 1) downto 0);
       	enable 	: in std_logic;
-      	saida 	: out std_logic_vector((DATA_WIDTH -1) downto 0)
+      	saida 	: out std_logic_vector((DATA_WIDTH - 1) downto 0)
     );
 end mux;
 

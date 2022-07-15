@@ -8,19 +8,20 @@ entity comparador is
 
 	port (
       a : in std_logic_vector((DATA_WIDTH - 1) downto 0);
-      a_eq_0 : out std_logic
+      b : in std_logic_vector((DATA_WIDTH - 1) downto 0);
+      a_eq_b : out std_logic
     );
 	
 end comparador;
 
 architecture behavior of comparador is
 begin
-  process(a)
+  process(a, b)
   begin
-    if(a = x"0000") then
-      a_eq_0 <= '1';
+    if(a = b) then
+      a_eq_b <= '1';
     else
-      a_eq_0 <= '0';
+      a_eq_b <= '0';
   	end if;
 	end process;
 end behavior;

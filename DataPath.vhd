@@ -1,5 +1,5 @@
-library ieee;
-use ieee.std_logic_1164.all;
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
 
 entity DataPath is
    port (
@@ -17,8 +17,8 @@ entity DataPath is
 		clock : in std_logic;
 		
 		-- SAIDAS --
+		
 		mensagem : out std_logic_vector(15 downto 0);
-		dadosImpressao : out std_logic_vector(15 downto 0);
 		
 		addrTicket : out std_logic;
 		ticketOk : out std_logic
@@ -26,55 +26,53 @@ entity DataPath is
 end DataPath;
 
 
-architecture RTLDataPath of DataPath is
+architecture RTLDataPath OF DataPath is
 
-component mux2x1 is
-	port (
-			CurrentChange : in std_logic_vector(9 downto 0);
-			CurrentMoney : in std_logic_vector(9 downto 0);
-			ChaveRetorno : in std_logic;
-			ReturnValue : out std_logic_vector(9 downto 0)
-		);
-END component;
+component mux is
+	port(
+		addrLeitorQr 		: in std_logic_vector(15 downto 0);
+		addrTicket	 		: in std_logic_vector(15 downto 0);
+		salvaDados		 	: in std_logic;
+		saida_mux 			: out std_logic_vector(15 downto 0)
+	);
+end component;
 
 component incrementador is
-	port (	
-		x 	: in std_logic_vector(6 downto 0);
-		s 		: out std_logic_vector(6 downto 0)
-	);
+	port (
+      	a 		: in std_logic_vector(15 downto 0);
+      	result	: out std_logic_vector(15 downto 0)
+    );
 end component;
 
 component comparador is
 	port (
-			FirstNumber : in std_logic_vector(15 downto 0);
-			SecondNumber : in std_logic_vector(15 downto 0);
-			First_lt_Second : out std_logic
-		)
-
+      	dadosLeitorQr		: in std_logic_vector(15 downto 0);
+      	saida_ram			: in std_logic_vector(15 downto 0);
+		saida_comparador	: out std_logic
+    );
 end component;
 
-component ROM is
+component rom is
 		generic (
 			ADDR_LENGHT : natural := 5;
 			R_LENGHT : natural := 16;
-			NUM_of_REGS : natural := 32
+			NUM_OF_REGS : natural := 32
 		);
 		port (
 			clk : in std_logic;
 			wr : in std_logic;
 			addr : in std_logic_vector (ADDR_LENGHT - 1 downto 0);
-			datain : in std_logic_vector (R_LENGHT - 1 downto 0);
-			dataout : out std_logic_vector (R_LENGHT - 1 downto 0)
+			data_in : in std_logic_vector (R_LENGHT - 1 downto 0);
+			data_out : out std_logic_vector (R_LENGHT - 1 downto 0)
 		);
 end component;
 
-component RAM is
+component ram IS
         port(
-             DATAIN : in std_logic_vector(7 downto 0);
-             ADDRESS : in std_logic_vector(7 downto 0);
-             -- Write when 0, Read when 1
-             W_R : in std_logic;
-             DATAout : out std_logic_vector(7 downto 0)
+             addr : in std_logic_vector(7 downto 0);
+             write : in std_logic_vector(7 downto 0);
+             data_in : in std_logic;
+             data_out : out std_logic_vector(7 downto 0)
              );
 end component;
 
@@ -96,23 +94,24 @@ signal aux_B_F, aux_A_E : std_logic_vector(9 downto 0);
 begin
 
 -- Componentes --
-A_Mux_2x1 : mux2x1 
-	port map(CurrentChange => addrLeitorQr, CurrentMoney => addrTicket, ChaveRetorno => salvaDados, ReturnValue => aux_A_E);
+
+A_Mux_2x1 : mux
+	port map(addrLeitorQr => addrLeitorQr, addrTicket => addrTicket, salvaDados => salvaDados, saida_mux => aux_A_E);
     
-B_incrementador : incrementador
-	port map(x=>addrTicket,s=>aux_B_F);
+B_Incrementador : incrementador
+	port map(a=>addrTicket, result=>aux_B_F);
 	
 C_Comparador : comparador
-	port map(valor_total=>dadosLeitorQr,saldo_cartao=>aux_E_C,saldo_lt_total=>ticketOk);
+	port map(dadosLeitorQr=>dadosLeitorQr, saida_ram=>aux_E_C, saida_comparador=>ticketOk);
 
-D_ROM : ROM 
-	port map(clk => CLOCK, wr => MEM_wr, addr => selecionaMensagem, datain => MEM_data_input, dataout => mensagem);
+D_ROM : ram 
+	port map(clk => CLOCK, wr => MEM_wr, addr => selecionaMensagem, data_in => MEM_data_input, data_out => mensagem);
 
-E_RAM : RAM 
-	port map(dadosPlaca => DATAin, aux_A_E => ADDRESS, salvaDados => W_R, aux_E_C => DATAout);
+E_RAM : rom 
+	port map(dadosPlaca => data_in, aux_A_E => addr, salvaDados => write, aux_E_C => data_out);
     
 F_Registrador : registrador 
-	port map(clk => CLOCK, aux_B_F => SLC, ticketRegClr => SLC_PRODUCT_clr, entradaAberto => SLC_PRODUCT_ld, addrTicket => caboD_HI);
+	port map(clk => CLOCK, aux_B_F => entrada, saida => aux_BF, clr => ticketRegClr, ld => entradaAberto);
 
 
 end RTLDataPath ;
