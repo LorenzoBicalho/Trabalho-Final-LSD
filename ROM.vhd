@@ -17,7 +17,7 @@ entity rom is
 	);
 end entity;
 
-architecture rom_register of eeprom is
+architecture rom_register of rom is
 	type rom_reg is array (0 to REGS - 1) of
 	std_logic_vector(R_LENGHT - 1 downto 0);
 	signal rom_s : rom_reg;
